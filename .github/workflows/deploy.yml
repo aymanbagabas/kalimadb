@@ -1,0 +1,65 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron:  '0 0 * * 0'
+
+jobs:
+  deploy:
+    strategy:
+      matrix:
+        node-version: ['16']
+    runs-on: ubuntu-latest
+    env:
+      USERNAME: "KalimaDB[bot] 🤖"
+      USEREMAIL: "actions@github.com"
+      DB: "kalimadb"
+
+    steps:
+      - uses: technote-space/auto-cancel-redundant-job@v1
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Test
+        run: npm test
+
+      - name: Run
+        run: |
+          npm start
+
+      - name: Compress, commit, and push
+        run: |
+          tar -czvf $DB.tar.gz $DB.db
+          export NOW=v$(date +'%Y%m%d.%H%M%S')
+          echo "NOW=$NOW" >> $GITHUB_ENV
+          git config --global user.name $USERNAME
+          git config --global user.email $USEREMAIL
+          git update-index --refresh | true
+          git add -f $DB.db | true
+          if ! git diff-index --quiet HEAD --; then
+            git commit -m "kalimadb: autopublish $NOW"
+            git push origin HEAD:master
+          fi
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.DB }}.tar.gz
+          path: ${{ env.DB }}.tar.gz
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: ${{ env.DB }}.tar.gz
+          tag: ${{ env.NOW }}
+          token: ${{ secrets.PAT }}
