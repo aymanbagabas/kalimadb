@@ -7,7 +7,7 @@
   "scripts": {
     "start": "tsc && node dist/index.js",
     "build": "tsc",
-    "test": "tsc && mocha ./sources/*/test/*.{js}"
+    "test": "tsc && mocha ./sources/*/test/*.js"
   },
   "repository": {
     "type": "git",
