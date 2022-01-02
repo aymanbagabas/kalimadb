@@ -31,8 +31,8 @@ const tables = [
   'author', 'composer', 'arranger', 'album', 'mixer', 'master'
 ]
 
-const songTable = `
-CREATE TABLE song (
+const songsTable = `
+CREATE TABLE songs (
   id INTEGER PRIMARY KEY,
   title TEXT NOT NULL,
   lyrics TEXT NOT NULL,
@@ -85,8 +85,8 @@ async function main () {
     `
     await db.exec(sqlstr)
   }
-  console.log('Creating song table...')
-  await db.exec(songTable)
+  console.log('Creating songs table...')
+  await db.exec(songsTable)
 
   const dbs = await scrapeDbs()
 
@@ -129,7 +129,7 @@ async function main () {
 
         if (song.title) {
           const songRes = await db.run(`
-            INSERT INTO song (title, lyrics, date, url, composer_id, arranger_id, mixer_id, author_id, album_id, master_id, artist_id)
+            INSERT INTO songs (title, lyrics, date, url, composer_id, arranger_id, mixer_id, author_id, album_id, master_id, artist_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
           `, [
             song.title,

@@ -41,25 +41,41 @@ jobs:
       - name: Compress, commit, and push
         run: |
           tar -czvf $DB.tar.gz $DB.db
+          tar -czvf fnanendb.tar.gz fnanendb.json
+          tar -czvf wneendb.tar.gz wneendb.json
           export NOW=v$(date +'%Y%m%d.%H%M%S')
           echo "NOW=$NOW" >> $GITHUB_ENV
           git config --global user.name $USERNAME
           git config --global user.email $USEREMAIL
           git update-index --refresh | true
           git add -f $DB.db | true
+          git add -f fnanendb.json | true
+          git add -f wneendb.json | true
           if ! git diff-index --quiet HEAD --; then
             git commit -m "kalimadb: autopublish $NOW"
             git push origin HEAD:master
           fi
 
-      - name: Archive code coverage results
+      - name: Archive kalimadb
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.DB }}.tar.gz
           path: ${{ env.DB }}.tar.gz
 
+      - name: Archive fnanendb
+        uses: actions/upload-artifact@v2
+        with:
+          name: fnanendb.tar.gz
+          path: fnanendb.tar.gz
+
+      - name: Archive wneendb
+        uses: actions/upload-artifact@v2
+        with:
+          name: wneendb.tar.gz
+          path: wneendb.tar.gz
+
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{ env.DB }}.tar.gz
+          artifacts: "${{ env.DB }}.tar.gz,fnanendb.tar.gz,wneendb.tar.gz"
           tag: ${{ env.NOW }}
           token: ${{ secrets.PAT }}

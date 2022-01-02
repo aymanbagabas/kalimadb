@@ -21,7 +21,7 @@ export default class WneenDB implements SDBDownloader {
         dump[artist.artist].push(s)
       }
     }
-    fs.writeFileSync('wneen.json', JSON.stringify(dump))
+    fs.writeFileSync('wneendb.json', JSON.stringify(dump))
     return Promise.resolve(dump)
   }
 }
