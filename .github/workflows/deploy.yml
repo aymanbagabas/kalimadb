@@ -43,6 +43,7 @@ jobs:
           tar -czvf $DB.tar.gz $DB.db
           tar -czvf fnanendb.tar.gz fnanendb.json
           tar -czvf wneendb.tar.gz wneendb.json
+          sha512sum kalimadb.db wneen.json fnanendb.json
           export NOW=v$(date +'%Y%m%d.%H%M%S')
           echo "NOW=$NOW" >> $GITHUB_ENV
           git config --global user.name $USERNAME
@@ -51,6 +52,7 @@ jobs:
           git add -f $DB.db | true
           git add -f fnanendb.json | true
           git add -f wneendb.json | true
+          git add -f checksum.txt | true
           if ! git diff-index --quiet HEAD --; then
             git commit -m "kalimadb: autopublish $NOW"
             git push origin HEAD:master
@@ -76,6 +78,6 @@ jobs:
 
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: "${{ env.DB }}.tar.gz,fnanendb.tar.gz,wneendb.tar.gz"
+          artifacts: "${{ env.DB }}.tar.gz,fnanendb.tar.gz,wneendb.tar.gz,checksum.txt"
           tag: ${{ env.NOW }}
           token: ${{ secrets.PAT }}
