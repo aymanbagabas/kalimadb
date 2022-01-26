@@ -26,12 +26,12 @@ describe('scraper', function () {
       })
     })
 
-    it('should return محمد عبده 456 songs', function () {
+    it('should return محمد عبده 460 songs', function () {
       return fetchSongs({
         artist: 'محمد عبده',
         url: 'https://www.wneen.com/singer/1'
       }).then(songs => {
-        assert.equal(songs.length, 456)
+        assert.equal(songs.length, 460)
       })
     })
   })
